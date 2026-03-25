@@ -1,0 +1,11 @@
+# IDE files
+.idea/
+.vscode/
+
+# Build artifacts
+*.o
+*.out
+*.exe
+
+# Mac junk (just in case)
+.DS_Store
