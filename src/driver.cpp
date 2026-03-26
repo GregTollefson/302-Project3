@@ -75,6 +75,16 @@ int main()
     // Example:
     //   library.add(Song("Midnights",      "Taylor Swift", 2022));
     //   library.add(Song("Blinding Lights", "The Weeknd",  2019));
+    
+    library.add(Song("Karn Evil 9", "Emerson, Lake & Palmer", 1973));
+    library.add(Song("Firth of Fifth", "Genesis", 1973));
+    library.add(Song("Shine On You Crazy Diamond", "Pink Floyd", 1975));
+    library.add(Song("Close to the Edge", "Yes", 1972));
+    library.add(Song("Roundabout", "Yes", 1971));
+    library.add(Song("Supper's Ready", "Genesis", 1972));
+    library.add(Song("Aqualung", "Jethro Tull", 1971));
+    library.add(Song("Time", "Pink Floyd", 1973));
+
 
     cout << "Songs added." << endl;
     cout << "getNumberOfNodes(): " << library.getNumberOfNodes() << endl;

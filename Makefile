@@ -63,7 +63,9 @@ TARGET = project3
 # because templates are not compiled separately. The compiler
 # sees BST.h when it is #included by MusicLibrary.cpp.
 # ------------------------------------------------------------
-SRCS = $(SRC_DIR)/driver.cpp
+SRCS = $(SRC_DIR)/driver.cpp \
+	   $(SRC_DIR)/Song.cpp \
+	   $(SRC_DIR)/MusicLibrary.cpp
 
 # --- Derived variables (you should not need to change these) ---
 
