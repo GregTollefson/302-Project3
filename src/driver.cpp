@@ -77,12 +77,12 @@ int main()
     //   library.add(Song("Blinding Lights", "The Weeknd",  2019));
     
     library.add(Song("Karn Evil 9", "Emerson, Lake & Palmer", 1973));
+    library.add(Song("Close to the Edge", "Yes", 1972));
+    library.add(Song("Aqualung", "Jethro Tull", 1971));
     library.add(Song("Firth of Fifth", "Genesis", 1973));
     library.add(Song("Shine On You Crazy Diamond", "Pink Floyd", 1975));
-    library.add(Song("Close to the Edge", "Yes", 1972));
     library.add(Song("Roundabout", "Yes", 1971));
     library.add(Song("Supper's Ready", "Genesis", 1972));
-    library.add(Song("Aqualung", "Jethro Tull", 1971));
     library.add(Song("Time", "Pink Floyd", 1973));
 
 
@@ -117,7 +117,7 @@ int main()
     // --------------------------------------------------
     printSection("7. Search — Song That Exists");
     // TODO: Replace "YOUR_SONG_TITLE" with a title you added above.
-    Song existingSong("YOUR_SONG_TITLE", "", 0);
+    Song existingSong("Roundabout", "Yes", 1971);
     cout << "Searching for \"" << existingSong.getTitle() << "\"..." << endl;
     cout << "contains(): " << (library.contains(existingSong) ? "true" : "false") << endl;
 
@@ -126,7 +126,7 @@ int main()
     // --------------------------------------------------
     printSection("8. Search — Song That Does Not Exist");
     // TODO: Use a title that is NOT in your library.
-    Song missingSong("NOT_IN_LIBRARY", "", 0);
+    Song missingSong("Brown Sugar", "Rolling Stones", 1971);
     cout << "Searching for \"" << missingSong.getTitle() << "\"..." << endl;
     cout << "contains(): " << (library.contains(missingSong) ? "true" : "false") << endl;
 
@@ -137,7 +137,7 @@ int main()
     // TODO: Replace "YOUR_SONG_TITLE" with a title you added above.
     try
     {
-        Song query("YOUR_SONG_TITLE", "", 0);
+        Song query("Roundabout", "Yes", 1971);
         Song found = library.getEntry(query);
         cout << "getEntry() found: " << found << endl;
     }
@@ -153,7 +153,7 @@ int main()
     // TODO: Use a title that is NOT in your library.
     try
     {
-        Song badQuery("NOT_IN_LIBRARY", "", 0);
+        Song badQuery("Brown Sugar", "Rolling Stones", 1971);
         Song found = library.getEntry(badQuery);
         cout << "getEntry() found: " << found << endl;  // should not reach here
     }
@@ -168,7 +168,7 @@ int main()
     printSection("11. Remove — Leaf Node");
     // TODO: Replace "LEAF_TITLE" with a title that is a LEAF in your BST.
     //       Verify by checking your paper sketch.
-    Song leafSong("LEAF_TITLE", "", 0);
+    Song leafSong("Time", "Pink Floyd", 1973);
     cout << "Removing \"" << leafSong.getTitle() << "\" (leaf)..." << endl;
     cout << "remove() returned: " << (library.remove(leafSong) ? "true" : "false") << endl;
     cout << "contains() after:  " << (library.contains(leafSong) ? "true" : "false") << endl;
@@ -181,7 +181,7 @@ int main()
     // --------------------------------------------------
     printSection("12. Remove — Node With One Child");
     // TODO: Replace "ONE_CHILD_TITLE" with a title whose node has exactly one child.
-    Song oneChildSong("ONE_CHILD_TITLE", "", 0);
+    Song oneChildSong("Supper's Ready", "Genesis", 1972);
     cout << "Removing \"" << oneChildSong.getTitle() << "\" (one child)..." << endl;
     cout << "remove() returned: " << (library.remove(oneChildSong) ? "true" : "false") << endl;
     cout << "contains() after:  " << (library.contains(oneChildSong) ? "true" : "false") << endl;
@@ -195,7 +195,7 @@ int main()
     printSection("13. Remove — Node With Two Children");
     // TODO: Replace "TWO_CHILDREN_TITLE" with a title whose node has two children.
     //       The inorder successor should replace it — verify in your output.
-    Song twoChildSong("TWO_CHILDREN_TITLE", "", 0);
+    Song twoChildSong("Close to the Edge", "Yes", 1972);
     cout << "Removing \"" << twoChildSong.getTitle() << "\" (two children)..." << endl;
     cout << "remove() returned: " << (library.remove(twoChildSong) ? "true" : "false") << endl;
     cout << "contains() after:  " << (library.contains(twoChildSong) ? "true" : "false") << endl;
@@ -207,7 +207,7 @@ int main()
     // CHECK: remove() on a title that DOES NOT EXIST
     // --------------------------------------------------
     printSection("14. Remove — Non-Existent Song (safe handling)");
-    Song notExist("NOT_IN_LIBRARY", "", 0);
+    Song notExist("Brown Sugar", "Rolling Stones", 1971);
     cout << "Removing \"" << notExist.getTitle() << "\" (not in library)..." << endl;
     cout << "remove() returned: " << (library.remove(notExist) ? "true" : "false") << endl;
     cout << "getNumberOfNodes(): " << library.getNumberOfNodes() << endl;
