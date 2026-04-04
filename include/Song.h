@@ -32,7 +32,7 @@
  * ORDERING AND UNIQUENESS
  * ------------------------------------------------------------
  *
- * Songs are ordered and identified **by title only**.
+ * Songs are ordered and identified by title only.
  *
  * This means:
  *   - operator< compares only the title field
@@ -61,7 +61,7 @@
  *
  * - Getter/Setter operations: O(1)
  * - Comparison operations:    O(1) (string comparison depends on length)
- * - Display operation:       O(1)
+ * - Display operation:        O(1)
  *
  */
 
@@ -76,9 +76,9 @@
 class Song : public SongInterface, public Comparable<Song>
 {
 private:
-    std::string title;
-    std::string artist;
-    int year;
+    std::string title_;
+    std::string artist_;
+    int year_;
 
 public:
     Song();

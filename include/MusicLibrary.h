@@ -95,7 +95,7 @@
 class MusicLibrary : public BinaryTreeInterface<Song>
 {
 private:
-    BST<Song> libraryTree;
+    BST<Song> library_tree_;  // internal BST storing all songs
 
 public:
     MusicLibrary();

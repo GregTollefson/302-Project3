@@ -19,9 +19,8 @@ The project demonstrates:
 
 ---
 
-## How to Build and Run
 
-### Build and Run 
+#### Build and Run 
 
 To build - From the project root directory:
 
@@ -301,3 +300,7 @@ Final inorder traversal:
 ==618122== For lists of detected and suppressed errors, rerun with: -s
 ==618122== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
+
+## Notes on Valgrind: 
+- Valgrind is enabled with some minor changes to the make file, e.g. compiler flags. 
+- After make, make run to get Valgrind output type **make valgrind**
