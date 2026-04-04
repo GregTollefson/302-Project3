@@ -4,147 +4,61 @@
  * @date 3-Apr-2026
  *
  * @brief Templated Binary Search Tree (BST) implementation.
- *
- * This class implements a pointer-based Binary Search Tree (BST) that stores
- * elements of a generic type ItemType. The type ItemType must support
- * comparison via operator< and operator==.
- *
- * The BST maintains the ordering invariant:
- *   - All values in the left subtree of a node are less than the node's value
- *   - All values in the right subtree of a node are greater than the node's value
- *
- * This invariant ensures efficient search, insertion, and removal operations.
- *
- * ------------------------------------------------------------
- * DESIGN OVERVIEW
- * ------------------------------------------------------------
- *
- * - The BST is implemented as a class template: BST<ItemType>
- * - Each node is dynamically allocated and contains:
- *     - ItemType data
- *     - pointer to left child
- *     - pointer to right child
- *
- * - The tree is managed via a root pointer (rootPtr) and a node count (itemCount)
- *
- * - All major operations (insert, remove, search, traversal) are implemented
- *   recursively using private helper functions.
- *
- * ------------------------------------------------------------
- * MEMORY MANAGEMENT
- * ------------------------------------------------------------
- *
- * - Nodes are allocated using new and deallocated using delete
- * - The destructor calls clear() to free all nodes
- * - No memory leaks should occur if all operations are used correctly
- *
- * NOTE:
- * This class manages dynamic memory. The default copy constructor and
- * assignment operator perform shallow copies, which may lead to undefined
- * behavior (e.g., double deletion). Copying is currently not needed, deep 
- * copy is not implemented.    
- *
- * ------------------------------------------------------------
- * PUBLIC OPERATIONS
- * ------------------------------------------------------------
- *
- * - isEmpty()              : returns true if the tree contains no nodes
- * - getHeight()            : returns the height of the tree
- * - getNumberOfNodes()     : returns the total number of nodes
- * - insert()               : inserts a new item while maintaining BST order
- * - remove()               : removes an item using BST deletion rules
- * - contains()             : checks if an item exists in the tree
- * - getEntry()             : retrieves an item or throws NotFoundException
- * - clear()                : removes all nodes from the tree
- *
- * - preorderTraverse()     : root → left → right traversal
- * - inorderTraverse()      : left → root → right (sorted order)
- * - postorderTraverse()    : left → right → root
- *
- * - isBalanced()           : checks if the tree is height-balanced
- *
- * ------------------------------------------------------------
- * BST REMOVAL CASES
- * ------------------------------------------------------------
- *
- * The remove operation handles three cases:
- *
- * 1. Leaf node:
- *    - Node is deleted directly
- *
- * 2. Node with one child:
- *    - Node is replaced with its child
- *
- * 3. Node with two children:
- *    - Node is replaced with its inorder successor
- *    - Inorder successor is the leftmost node of the right subtree
- *
- * ------------------------------------------------------------
- * BALANCE DEFINITION
- * ------------------------------------------------------------
- *
- * A tree is considered balanced if, for every node, the height difference
- * between its left and right subtrees is no greater than 1.
- *
- * The isBalanced() method verifies this condition recursively.
- *
- * ------------------------------------------------------------
- * COMPLEXITY (AVERAGE CASE)
- * ------------------------------------------------------------
- *
- * Operation            Time Complexity
- * ------------------------------------
- * Insert               O(log n)
- * Remove               O(log n)
- * Search               O(log n)
- * Traversal            O(n)
- *
- * Worst-case complexity degrades to O(n) if the tree becomes unbalanced.
- *
- * ------------------------------------------------------------
- * USAGE NOTE
- * ------------------------------------------------------------
- *
- * This BST is used internally by the MusicLibrary class and is not intended
- * to be used directly by clients. It provides the underlying data structure
- * that supports efficient song storage and retrieval.
  */
 
 #ifndef BST_H
 #define BST_H
 
 #include "NotFoundException.h"
-#include <algorithm> // std:max is used for checking tree height 
-#include <cmath> // std:abs used for checking height differences
+#include <algorithm> // std::max used for height calculation
+#include <cmath>     // std::abs used for balance checking
 
 template <class ItemType>
 class BST
 {
 private:
+    // Node structure representing each element in the tree
     struct Node
     {
-        ItemType data;
-        Node* left;
-        Node* right;
+        ItemType data;   // value stored in node
+        Node* left;      // pointer to left child 
+        Node* right;     // pointer to right child 
 
+        // Constructor initializes node with data and null children
         Node(const ItemType& item)
             : data(item), left(nullptr), right(nullptr) {}
     };
 
-    Node* rootPtr;
-    int itemCount;
+    Node* rootPtr;   // pointer to root of the tree
+    int itemCount;   // total number of nodes in the tree
 
-    // Helpers
+    // ----------- Helper Functions (Recursive Core Logic) -----------
+
+    // Inserts node in correct BST position and returns updated subtree root
     Node* insertInorder(Node* subTreePtr, Node* newNodePtr);
+
+    // Recursively searches for target and removes it if found
     Node* removeValue(Node* subTreePtr, const ItemType& target, bool& success);
+
+    // Removes a specific node and restructures tree (3 cases handled)
     Node* removeNode(Node* nodePtr);
+
+    // Finds and removes leftmost node (inorder successor)
     Node* removeLeftmostNode(Node* subTreePtr, ItemType& inorderSuccessor);
+
+    // Searches for a node containing target
     Node* findNode(Node* treePtr, const ItemType& target) const;
 
+    // Returns height of subtree
     int getHeightHelper(Node* subTreePtr) const;
+
+    // Deletes all nodes in subtree (postorder deletion)
     void clearHelper(Node* subTreePtr);
+
+    // Checks if subtree is balanced
     bool isBalancedHelper(Node* subTreePtr) const;
 
+    // Traversal helpers
     void preorder(void visit(ItemType&), Node* treePtr) const;
     void inorder(void visit(ItemType&), Node* treePtr) const;
     void postorder(void visit(ItemType&), Node* treePtr) const;
@@ -174,77 +88,90 @@ public:
 // Implementations
 //---------------------------------------------------
 
+// Constructor initializes empty tree
 template <class ItemType>
 BST<ItemType>::BST() : rootPtr(nullptr), itemCount(0) {}
 
+// Destructor ensures all dynamically allocated nodes are freed
 template <class ItemType>
 BST<ItemType>::~BST()
 {
-    clear();
+    clear(); // prevents memory leaks
 }
 
+// Returns true if tree has no nodes
 template <class ItemType>
 bool BST<ItemType>::isEmpty() const
 {
     return itemCount == 0;
 }
 
+// Public wrapper for recursive height calculation
 template <class ItemType>
 int BST<ItemType>::getHeight() const
 {
     return getHeightHelper(rootPtr);
 }
 
+// Returns total number of nodes tracked by itemCount
 template <class ItemType>
 int BST<ItemType>::getNumberOfNodes() const
 {
     return itemCount;
 }
 
+// Inserts new value into BST
 template <class ItemType>
 bool BST<ItemType>::insert(const ItemType& newEntry)
 {
-    Node* newNodePtr = new Node(newEntry);
-    rootPtr = insertInorder(rootPtr, newNodePtr);
-    ++itemCount;
+    Node* newNodePtr = new Node(newEntry);  // allocate new node
+    rootPtr = insertInorder(rootPtr, newNodePtr); // update root if needed
+    ++itemCount; // maintain count invariant
     return true;
 }
 
+// Recursive insertion maintaining BST ordering property
 template <class ItemType>
 typename BST<ItemType>::Node* BST<ItemType>::insertInorder(Node* subTreePtr, Node* newNodePtr)
 {
+    // Base case: found insertion point
     if (subTreePtr == nullptr)
         return newNodePtr;
 
+    // Recurse left or right depending on ordering
     if (newNodePtr->data < subTreePtr->data)
         subTreePtr->left = insertInorder(subTreePtr->left, newNodePtr);
     else
         subTreePtr->right = insertInorder(subTreePtr->right, newNodePtr);
 
-    return subTreePtr;
+    return subTreePtr; // return unchanged root of subtree
 }
 
+// Returns true if target exists in tree
 template <class ItemType>
 bool BST<ItemType>::contains(const ItemType& target) const
 {
     return findNode(rootPtr, target) != nullptr;
 }
 
+// Recursive search following BST ordering
 template <class ItemType>
 typename BST<ItemType>::Node* BST<ItemType>::findNode(Node* treePtr, const ItemType& target) const
 {
-    if (!treePtr)
+    if (!treePtr) // base case: not found
         return nullptr;
 
-    if (target == treePtr->data)
+    if (target == treePtr->data) // found
         return treePtr;
 
+    // recurse left or right depending on comparison
     if (target < treePtr->data)
         return findNode(treePtr->left, target);
 
     return findNode(treePtr->right, target);
 }
 
+// Retrieves value or throws exception if not found
 template <class ItemType>
 ItemType BST<ItemType>::getEntry(const ItemType& target) const
 {
@@ -256,14 +183,16 @@ ItemType BST<ItemType>::getEntry(const ItemType& target) const
     return result->data;
 }
 
+// Clears entire tree
 template <class ItemType>
 void BST<ItemType>::clear()
 {
-    clearHelper(rootPtr);
-    rootPtr = nullptr;
-    itemCount = 0;
+    clearHelper(rootPtr); // delete all nodes
+    rootPtr = nullptr;    // reset root
+    itemCount = 0;        // reset count
 }
 
+// Postorder deletion ensures children are deleted before parent
 template <class ItemType>
 void BST<ItemType>::clearHelper(Node* subTreePtr)
 {
@@ -271,24 +200,29 @@ void BST<ItemType>::clearHelper(Node* subTreePtr)
     {
         clearHelper(subTreePtr->left);
         clearHelper(subTreePtr->right);
-        delete subTreePtr;
+        delete subTreePtr; // safe after children removed
     }
 }
 
+// Computes height recursively
 template <class ItemType>
 int BST<ItemType>::getHeightHelper(Node* subTreePtr) const
 {
     if (!subTreePtr)
         return 0;
 
-    return 1 + std::max(getHeightHelper(subTreePtr->left),
-                        getHeightHelper(subTreePtr->right));
+    // height = 1 + max(left height, right height)
+    return 1 + std::max(
+        getHeightHelper(subTreePtr->left),
+        getHeightHelper(subTreePtr->right)
+    );
 }
 
 //----------------------------------------------------
-//Traversals
+// Traversals
 //----------------------------------------------------
 
+// Public wrappers call recursive helpers
 template <class ItemType>
 void BST<ItemType>::preorderTraverse(void visit(ItemType&)) const
 {
@@ -307,6 +241,7 @@ void BST<ItemType>::postorderTraverse(void visit(ItemType&)) const
     postorder(visit, rootPtr);
 }
 
+// Root → Left → Right
 template <class ItemType>
 void BST<ItemType>::preorder(void visit(ItemType&), Node* treePtr) const
 {
@@ -318,6 +253,7 @@ void BST<ItemType>::preorder(void visit(ItemType&), Node* treePtr) const
     }
 }
 
+// Left → Root → Right (sorted order for BST)
 template <class ItemType>
 void BST<ItemType>::inorder(void visit(ItemType&), Node* treePtr) const
 {
@@ -329,6 +265,7 @@ void BST<ItemType>::inorder(void visit(ItemType&), Node* treePtr) const
     }
 }
 
+// Left → Right → Root
 template <class ItemType>
 void BST<ItemType>::postorder(void visit(ItemType&), Node* treePtr) const
 {
@@ -344,6 +281,7 @@ void BST<ItemType>::postorder(void visit(ItemType&), Node* treePtr) const
 // Remove 
 //---------------------------------------------------
 
+// Public remove interface
 template <class ItemType>
 bool BST<ItemType>::remove(const ItemType& target)
 {
@@ -351,28 +289,29 @@ bool BST<ItemType>::remove(const ItemType& target)
     rootPtr = removeValue(rootPtr, target, success);
 
     if (success)
-        --itemCount;
+        --itemCount; // maintain count consistency
 
     return success;
 }
 
+// Recursive search + removal
 template <class ItemType>
-typename BST<ItemType>::Node* BST<ItemType>::removeValue(Node* subTreePtr,
-                                                        const ItemType& target,
-                                                        bool& success)
+typename BST<ItemType>::Node* BST<ItemType>::removeValue(
+    Node* subTreePtr, const ItemType& target, bool& success)
 {
     if (!subTreePtr)
     {
-        success = false;
+        success = false; // not found
         return nullptr;
     }
 
     if (target == subTreePtr->data)
     {
         success = true;
-        return removeNode(subTreePtr);
+        return removeNode(subTreePtr); // remove this node
     }
 
+    // recurse to correct subtree
     if (target < subTreePtr->data)
         subTreePtr->left = removeValue(subTreePtr->left, target, success);
     else
@@ -381,17 +320,18 @@ typename BST<ItemType>::Node* BST<ItemType>::removeValue(Node* subTreePtr,
     return subTreePtr;
 }
 
+// Handles the 3 deletion cases
 template <class ItemType>
 typename BST<ItemType>::Node* BST<ItemType>::removeNode(Node* nodePtr)
 {
-    // Case 1: leaf
+    // Case 1: leaf node
     if (!nodePtr->left && !nodePtr->right)
     {
         delete nodePtr;
         return nullptr;
     }
 
-    // Case 2: one child
+    // Case 2: one child (right only)
     if (!nodePtr->left)
     {
         Node* temp = nodePtr->right;
@@ -399,6 +339,7 @@ typename BST<ItemType>::Node* BST<ItemType>::removeNode(Node* nodePtr)
         return temp;
     }
 
+    // Case 2: one child (left only)
     if (!nodePtr->right)
     {
         Node* temp = nodePtr->left;
@@ -406,7 +347,8 @@ typename BST<ItemType>::Node* BST<ItemType>::removeNode(Node* nodePtr)
         return temp;
     }
 
-    // Case 3: two children (inorder successor)
+    // Case 3: two children
+    // Replace node with inorder successor
     ItemType successor;
     nodePtr->right = removeLeftmostNode(nodePtr->right, successor);
     nodePtr->data = successor;
@@ -414,9 +356,10 @@ typename BST<ItemType>::Node* BST<ItemType>::removeNode(Node* nodePtr)
     return nodePtr;
 }
 
+// Finds and removes leftmost node (smallest value)
 template <class ItemType>
-typename BST<ItemType>::Node* BST<ItemType>::removeLeftmostNode(Node* subTreePtr,
-                                                               ItemType& inorderSuccessor)
+typename BST<ItemType>::Node* BST<ItemType>::removeLeftmostNode(
+    Node* subTreePtr, ItemType& inorderSuccessor)
 {
     if (!subTreePtr->left)
     {
@@ -434,12 +377,14 @@ typename BST<ItemType>::Node* BST<ItemType>::removeLeftmostNode(Node* subTreePtr
 // Balance Check 
 //---------------------------------------------------
 
+// Public interface
 template <class ItemType>
 bool BST<ItemType>::isBalanced() const
 {
     return isBalancedHelper(rootPtr);
 }
 
+// Checks height difference at every node
 template <class ItemType>
 bool BST<ItemType>::isBalancedHelper(Node* subTreePtr) const
 {
@@ -449,9 +394,11 @@ bool BST<ItemType>::isBalancedHelper(Node* subTreePtr) const
     int left = getHeightHelper(subTreePtr->left);
     int right = getHeightHelper(subTreePtr->right);
 
+    // If difference > 1 → not balanced
     if (std::abs(left - right) > 1)
         return false;
 
+    // Check recursively for all nodes
     return isBalancedHelper(subTreePtr->left) &&
            isBalancedHelper(subTreePtr->right);
 }

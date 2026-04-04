@@ -1,27 +1,27 @@
 ## Design Decisions
 
-### 1. Ordering key
-The Binary Search Tree (BST) is ordered by **song title**. This decision was made because:
-- The assignment requires inorder traversal to produce songs in alphabetical order.
-- Titles provide a natural and intuitive sorting key for a music library.
-- Titles are sufficiently unique for this dataset and simplify comparisons.
+### 1. Ordering key:
+The Binary Search Tree (BST) is ordered by **song title**:
+- The assignment requires inorder BST traversal to list songs in alphabetical order.
+- Titles provide the best sorting key for a music library (Artist search could be added as an option later)
+- Titles provide a unique key for simple sorting comparisons.
 
-Both `operator<` and `operator==` in the `Song` class compare only the title field to ensure consistent ordering behavior.
+Both `operator<` and `operator==` in the `Song` class compare the title field for sorting.
 
 ---
 
-### 2. Insertion order & balance
-Songs were inserted using a **median-first strategy** to approximate a balanced BST.
-
-Instead of inserting songs in alphabetical order (which would produce a degenerate tree), the insertion order was carefully chosen to:
+### 2. Insertion order & balance:
+A balanced tree has the best search, add, and remove performance, closer to O(logN) vs an unbalanced tree. 
+For this project, songs were inserted using  **middle element first** to approximate a balanced BST.
+Specifically: 
 - Place a middle value first (root)
 - Then insert values that divide the remaining elements into left and right subtrees
 
-This approach results in a tree where the height difference between subtrees is minimized, allowing `isBalanced()` to return `true`.
+This approach results in a tree where the height difference between subtrees is minimized, so that `isBalanced()` returns `true`.
 
 ---
 
-### 3. Operator overloading
+### 3. Operator overloading:
 The following operators were overloaded in the `Song` class:
 
 - `operator<`  
@@ -30,21 +30,22 @@ The following operators were overloaded in the `Song` class:
 - `operator==`  
   Used for search operations such as `contains()` and `getEntry()`.
 
-Both operators compare songs based solely on their **title**, ensuring consistent behavior across all BST operations.
+Both operators compare songs based solely on their **title**, ensuring consistent behavior across all BST operations (add, remove, etc.).
 
 ---
 
-### 4. Template implementation
+### 4. Template implementation:
 The `BST<T>` class is implemented as a **header-only template**.
 
 This design was chosen because:
+- Templated BST is a rubrik requirement
 - C++ templates must be fully visible at compile time
-- Separating implementation into a `.cpp` file would cause linker errors
+- For a template class, separating implementation into a `.cpp` file would cause compiler erros 
 - A header-only approach simplifies compilation and avoids explicit instantiation issues
 
 ---
 
-### 5. Remove strategy
+### 5. Remove Strategy:
 The `remove()` operation handles three cases:
 
 1. **Leaf node**  
@@ -61,7 +62,7 @@ This approach preserves the BST ordering property.
 ---
 
 ### 6. Traversal output format
-All traversals use the **visit-function pattern**, where a client-provided function is applied to each node.
+All traversals use the **Visit-Function Rattern**, where a client-provided function is applied to each node.
 
 Each song is displayed using the format:
 
@@ -70,8 +71,7 @@ Traversal behavior:
 - **Inorder** → Produces sorted output by title
 - **Preorder** → Visits root before subtrees
 - **Postorder** → Visits root after subtrees
-
-This consistent formatting makes correctness easy to verify.
+- Traversal relies on a **protected recursive helper**, per requirements, implemented in BST.h
 
 ---
 
@@ -80,7 +80,7 @@ This consistent formatting makes correctness easy to verify.
 - **Empty tree**
   - `isEmpty()` returns true
   - `getHeight()` returns 0
-  - Traversals produce no output
+  - Traversals of an empty tree produce no output
 
 - **Duplicates**
   - Duplicate titles are not explicitly prevented

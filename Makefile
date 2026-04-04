@@ -37,7 +37,7 @@
 
 # --- Compiler and flags ---
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -pedantic -Iinclude
+CXXFLAGS = -std=c++17 -Wall -Wextra -pedantic -g -O0 -Iinclude
 
 # --- Directory layout ---
 SRC_DIR = src
@@ -76,7 +76,7 @@ OBJS = $(SRCS:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 EXECUTABLE = $(BUILD_DIR)/$(TARGET)
 
 # Phony targets are not files — they always run when requested
-.PHONY: all clean run
+.PHONY: all clean run valgrind 
 
 # Default target: build the executable
 all: $(EXECUTABLE)
@@ -99,3 +99,6 @@ clean:
 # Build (if needed) then run
 run: $(EXECUTABLE)
 	$(EXECUTABLE)
+
+valgrind: $(EXECUTABLE)
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes $(EXECUTABLE)
