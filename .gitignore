@@ -9,3 +9,6 @@
 
 # Mac junk (just in case)
 .DS_Store
+
+# Zips
+*.zip
